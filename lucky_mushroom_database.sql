@@ -66,8 +66,8 @@ CREATE TABLE `edible_statuses`
 CREATE TABLE `gps_tags`
 (
 	`tag_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`latitude` INT NOT NULL,
-	`longitude` INT NOT NULL,
+	`latitude_seconds` INT NOT NULL,
+	`longitude_seconds` INT NOT NULL,
 	CONSTRAINT `PK_gps_tags` PRIMARY KEY (`tag_id` ASC)
 )
 
@@ -157,11 +157,11 @@ ALTER TABLE `gps_tags`
 ;
 
 ALTER TABLE `gps_tags` 
- ADD INDEX `IX_latitude` (`latitude` ASC)
+ ADD INDEX `IX_latitude_seconds` (`latitude_seconds` ASC)
 ;
 
 ALTER TABLE `gps_tags` 
- ADD INDEX `IX_longitude` (`longitude` ASC)
+ ADD INDEX `IX_longitude_seconds` (`longitude_seconds` ASC)
 ;
 
 ALTER TABLE `recognition_requests` 
@@ -236,7 +236,11 @@ DELIMITER //
 CREATE TRIGGER TRG_check_insert_gps_tag BEFORE INSERT ON gps_tags
 FOR EACH ROW
 BEGIN
-	IF NEW.latitude < -90 OR NEW.latitude > 90 OR NEW.longitude < -180 OR NEW.longitude > 180 THEN
+	DECLARE max_latitude INT UNSIGNED;
+	SET max_lattitude = 90 * 60 * 60;
+	DECLARE max_longitude INT UNSIGNED;
+	SET max_longitude = 180 * 60 * 60;
+	IF NEW.latitude_seconds < -max_lattitude OR NEW.latitude_seconds > max_lattitude OR NEW.longitude_seconds < -max_longitude OR NEW.longitude_seconds > max_longitude THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Not existing place',
 			MYSQL_ERRNO = 1001;
@@ -246,7 +250,11 @@ END;
 CREATE TRIGGER TRG_check_update_gps_tag BEFORE UPDATE ON gps_tags
 FOR EACH ROW
 BEGIN
-	IF NEW.latitude < -90 OR NEW.latitude > 90 OR NEW.longitude < -180 OR NEW.longitude > 180 THEN
+	DECLARE max_latitude INT UNSIGNED;
+	SET max_lattitude = 90 * 60 * 60;
+	DECLARE max_longitude INT UNSIGNED;
+	SET max_longitude = 180 * 60 * 60;
+	IF NEW.latitude_seconds < -max_lattitude OR NEW.latitude_seconds > max_lattitude OR NEW.longitude_seconds < -max_longitude OR NEW.longitude_seconds > max_longitude THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Not existing place',
 			MYSQL_ERRNO = 1001;
