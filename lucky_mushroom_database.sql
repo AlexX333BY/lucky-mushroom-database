@@ -66,8 +66,8 @@ CREATE TABLE `edible_statuses`
 CREATE TABLE `gps_tags`
 (
 	`tag_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`seconds_north` INT UNSIGNED NOT NULL,
-	`seconds_west` INT UNSIGNED NOT NULL,
+	`latitude` INT NOT NULL,
+	`longitude` INT NOT NULL,
 	CONSTRAINT `PK_gps_tags` PRIMARY KEY (`tag_id` ASC)
 )
 
@@ -157,11 +157,11 @@ ALTER TABLE `gps_tags`
 ;
 
 ALTER TABLE `gps_tags` 
- ADD INDEX `IX_seconds_north` (`seconds_north` ASC)
+ ADD INDEX `IX_latitude` (`latitude` ASC)
 ;
 
 ALTER TABLE `gps_tags` 
- ADD INDEX `IX_seconds_west` (`seconds_west` ASC)
+ ADD INDEX `IX_longitude` (`longitude` ASC)
 ;
 
 ALTER TABLE `recognition_requests` 
@@ -218,6 +218,37 @@ BEGIN
 	IF NOT check_datetime(NEW.request_datetime) THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'New datetime is from future',
+			MYSQL_ERRNO = 1001;
+	END IF;
+END; 
+//
+DELIMITER ;
+;
+
+DROP TRIGGER IF EXISTS `TRG_check_insert_gps_tag`
+;
+
+DROP TRIGGER IF EXISTS `TRG_check_update_gps_tag`
+;
+
+DELIMITER //
+
+CREATE TRIGGER TRG_check_insert_gps_tag BEFORE INSERT ON gps_tags
+FOR EACH ROW
+BEGIN
+	IF NEW.latitude < -90 OR NEW.latitude > 90 OR NEW.longitude < -180 OR NEW.longitude > 180 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Not existing place',
+			MYSQL_ERRNO = 1001;
+	END IF;
+END;
+
+CREATE TRIGGER TRG_check_update_gps_tag BEFORE UPDATE ON gps_tags
+FOR EACH ROW
+BEGIN
+	IF NEW.latitude < -90 OR NEW.latitude > 90 OR NEW.longitude < -180 OR NEW.longitude > 180 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Not existing place',
 			MYSQL_ERRNO = 1001;
 	END IF;
 END; 
