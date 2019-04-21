@@ -237,8 +237,8 @@ CREATE TRIGGER TRG_check_insert_gps_tag BEFORE INSERT ON gps_tags
 FOR EACH ROW
 BEGIN
 	DECLARE max_latitude INT UNSIGNED;
-	SET max_lattitude = 90 * 60 * 60;
 	DECLARE max_longitude INT UNSIGNED;
+	SET max_latitude = 90 * 60 * 60;
 	SET max_longitude = 180 * 60 * 60;
 	IF NEW.latitude_seconds < -max_lattitude OR NEW.latitude_seconds > max_lattitude OR NEW.longitude_seconds < -max_longitude OR NEW.longitude_seconds > max_longitude THEN
 		SIGNAL SQLSTATE '45000'
@@ -251,8 +251,8 @@ CREATE TRIGGER TRG_check_update_gps_tag BEFORE UPDATE ON gps_tags
 FOR EACH ROW
 BEGIN
 	DECLARE max_latitude INT UNSIGNED;
-	SET max_lattitude = 90 * 60 * 60;
 	DECLARE max_longitude INT UNSIGNED;
+	SET max_latitude = 90 * 60 * 60;
 	SET max_longitude = 180 * 60 * 60;
 	IF NEW.latitude_seconds < -max_lattitude OR NEW.latitude_seconds > max_lattitude OR NEW.longitude_seconds < -max_longitude OR NEW.longitude_seconds > max_longitude THEN
 		SIGNAL SQLSTATE '45000'
