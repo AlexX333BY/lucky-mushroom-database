@@ -199,7 +199,7 @@ CREATE FUNCTION check_datetime(new_datetime DATETIME)
 	NOT DETERMINISTIC
 	NO SQL
 BEGIN
-	RETURN new_datetime > NOW();
+	RETURN new_datetime <= NOW();
 END;
 
 CREATE TRIGGER TRG_check_insert_datetime BEFORE INSERT ON recognition_requests
