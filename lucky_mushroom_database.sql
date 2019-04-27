@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS `users` CASCADE
 
 CREATE TABLE `articles`
 (
-	`article_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`article_id` INT NOT NULL AUTO_INCREMENT,
 	`article_text` TEXT NOT NULL,
 	CONSTRAINT `PK_articles` PRIMARY KEY (`article_id` ASC)
 )
@@ -46,8 +46,8 @@ CREATE TABLE `articles`
 
 CREATE TABLE `articles_gps_tags`
 (
-	`tag_id` INT UNSIGNED NOT NULL,
-	`article_id` INT UNSIGNED NOT NULL,
+	`tag_id` INT NOT NULL,
+	`article_id` INT NOT NULL,
 	CONSTRAINT `PK_articles_gps_tags` PRIMARY KEY (`article_id` ASC, `tag_id` ASC)
 )
 
@@ -57,7 +57,7 @@ CREATE TABLE `edible_statuses`
 (
 	`edible_status_alias` ENUM('edible', 'partial-edible', 'non-edible') NOT NULL,
 	`edible_description` VARCHAR(16) NOT NULL,
-	`edible_status_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`edible_status_id` INT NOT NULL AUTO_INCREMENT,
 	CONSTRAINT `PK_edible_statuses` PRIMARY KEY (`edible_status_id` ASC)
 )
 
@@ -65,7 +65,7 @@ CREATE TABLE `edible_statuses`
 
 CREATE TABLE `gps_tags`
 (
-	`tag_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`tag_id` INT NOT NULL AUTO_INCREMENT,
 	`latitude_seconds` INT NOT NULL,
 	`longitude_seconds` INT NOT NULL,
 	CONSTRAINT `PK_gps_tags` PRIMARY KEY (`tag_id` ASC)
@@ -75,11 +75,11 @@ CREATE TABLE `gps_tags`
 
 CREATE TABLE `recognition_requests`
 (
-	`request_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`request_id` INT NOT NULL AUTO_INCREMENT,
 	`request_datetime` DATETIME NOT NULL,
-	`requester_id` INT UNSIGNED NOT NULL,
-	`status_id` INT UNSIGNED NOT NULL,
-	`edible_status_id` INT UNSIGNED NULL,
+	`requester_id` INT NOT NULL,
+	`status_id` INT NOT NULL,
+	`edible_status_id` INT NULL,
 	CONSTRAINT `PK_recognition_request` PRIMARY KEY (`request_id` ASC)
 )
 
@@ -89,7 +89,7 @@ CREATE TABLE `recognition_statuses`
 (
 	`status_alias` ENUM('recognized', 'not-recognized') NOT NULL,
 	`status_name` VARCHAR(16) NOT NULL,
-	`status_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`status_id` INT NOT NULL AUTO_INCREMENT,
 	CONSTRAINT `PK_request_statuses` PRIMARY KEY (`status_id` ASC)
 )
 
@@ -97,9 +97,9 @@ CREATE TABLE `recognition_statuses`
 
 CREATE TABLE `request_photos`
 (
-	`photo_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`photo_id` INT NOT NULL AUTO_INCREMENT,
 	`photo_filename` VARCHAR(128) NOT NULL,
-	`request_id` INT UNSIGNED NULL,
+	`request_id` INT NOT NULL,
 	CONSTRAINT `PK_request_photo` PRIMARY KEY (`photo_id` ASC)
 )
 
@@ -109,7 +109,7 @@ CREATE TABLE `roles`
 (
 	`role_alias` ENUM('user', 'admin') NOT NULL,
 	`role_name` VARCHAR(16) NOT NULL,
-	`role_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`role_id` INT NOT NULL AUTO_INCREMENT,
 	CONSTRAINT `PK_roles` PRIMARY KEY (`role_id` ASC)
 )
 
@@ -119,7 +119,7 @@ CREATE TABLE `user_credentials`
 (
 	`user_mail` VARCHAR(50) NOT NULL,
 	`user_password_hash` VARCHAR(128) NOT NULL,
-	`user_id` INT UNSIGNED NOT NULL,
+	`user_id` INT NOT NULL,
 	CONSTRAINT `PK_user_credentials` PRIMARY KEY (`user_id` ASC)
 )
 
@@ -127,8 +127,8 @@ CREATE TABLE `user_credentials`
 
 CREATE TABLE `users`
 (
-	`user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`role_id` INT UNSIGNED NOT NULL DEFAULT 0,
+	`user_id` INT NOT NULL AUTO_INCREMENT,
+	`role_id` INT NOT NULL DEFAULT 0,
 	CONSTRAINT `PK_users` PRIMARY KEY (`user_id` ASC)
 )
 
@@ -240,7 +240,7 @@ BEGIN
 	DECLARE max_longitude INT UNSIGNED;
 	SET max_latitude = 90 * 60 * 60;
 	SET max_longitude = 180 * 60 * 60;
-	IF NEW.latitude_seconds < -max_lattitude OR NEW.latitude_seconds > max_lattitude OR NEW.longitude_seconds < -max_longitude OR NEW.longitude_seconds > max_longitude THEN
+	IF NEW.latitude_seconds < -max_latitude OR NEW.latitude_seconds > max_latitude OR NEW.longitude_seconds < -max_longitude OR NEW.longitude_seconds > max_longitude THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Not existing place',
 			MYSQL_ERRNO = 1001;
@@ -330,21 +330,21 @@ DROP TRIGGER IF EXISTS `TRG_restrict_transfer_last_admin_to_users`
 
 DELIMITER //
 CREATE FUNCTION get_admin_role_id()
-	RETURNS INT UNSIGNED
+	RETURNS INT
 	NOT DETERMINISTIC
 	READS SQL DATA
 BEGIN
-	DECLARE admin_id INT UNSIGNED;
+	DECLARE admin_id INT;
 	SET admin_id = (SELECT role_id FROM roles WHERE role_alias = 'admin');
 	RETURN admin_id;
 END;
 
 CREATE FUNCTION get_user_role_id()
-	RETURNS INT UNSIGNED
+	RETURNS INT
 	NOT DETERMINISTIC
 	READS SQL DATA
 BEGIN
-	DECLARE user_id INT UNSIGNED;
+	DECLARE user_id INT;
 	SET user_id = (SELECT role_id FROM roles WHERE role_alias = 'user');
 	RETURN user_id;
 END;
@@ -354,7 +354,7 @@ CREATE FUNCTION is_single_admin_left()
 	NOT DETERMINISTIC
 	READS SQL DATA
 BEGIN
-	DECLARE admin_id INT UNSIGNED;
+	DECLARE admin_id INT;
 	SET admin_id = get_admin_role_id();
 	RETURN (SELECT COUNT(*) FROM users WHERE role_id = admin_id) = 1;
 END;
@@ -372,7 +372,7 @@ END;
 CREATE TRIGGER TRG_restrict_transfer_last_admin_to_users BEFORE UPDATE ON users
 FOR EACH ROW
 BEGIN
-	DECLARE admin_id INT UNSIGNED;
+	DECLARE admin_id INT;
 	SET admin_id = get_admin_role_id();
 	IF OLD.role_id = admin_id AND NEW.role_id != admin_id AND is_single_admin_left() THEN
 		SIGNAL SQLSTATE '45000'
