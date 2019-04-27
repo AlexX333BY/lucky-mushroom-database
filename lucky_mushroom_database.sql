@@ -137,7 +137,7 @@ CREATE TABLE `users`
 /* Create Primary Keys, Indexes, Uniques, Checks */
 
 ALTER TABLE `articles` 
- ADD INDEX `IX_article_id` (`article_id` ASC)
+ ADD UNIQUE INDEX `IX_article_id` (`article_id` ASC)
 ;
 
 ALTER TABLE `articles_gps_tags` 
@@ -145,15 +145,15 @@ ALTER TABLE `articles_gps_tags`
 ;
 
 ALTER TABLE `edible_statuses` 
- ADD INDEX `IX_edible_status_id` (`edible_status_id` ASC)
+ ADD UNIQUE INDEX `IX_edible_status_id` (`edible_status_id` ASC)
 ;
 
 ALTER TABLE `edible_statuses` 
- ADD INDEX `IX_edible_status_alias` (`edible_status_alias` ASC)
+ ADD UNIQUE INDEX `IX_edible_status_alias` (`edible_status_alias` ASC)
 ;
 
 ALTER TABLE `gps_tags` 
- ADD INDEX `IX_gps_tags` (`tag_id` ASC)
+ ADD UNIQUE INDEX `IX_gps_tags` (`tag_id` ASC)
 ;
 
 ALTER TABLE `gps_tags` 
@@ -181,7 +181,7 @@ ALTER TABLE `recognition_requests`
 ;
 
 ALTER TABLE `recognition_requests` 
- ADD INDEX `IX_request_datetime` (`request_datetime` ASC)
+ ADD UNIQUE INDEX `IX_request_datetime` (`request_datetime` ASC)
 ;
 
 DROP FUNCTION IF EXISTS `check_datetime`
@@ -265,11 +265,11 @@ DELIMITER ;
 ;
 
 ALTER TABLE `recognition_statuses` 
- ADD INDEX `IX_status_id` (`status_id` ASC)
+ ADD UNIQUE INDEX `IX_status_id` (`status_id` ASC)
 ;
 
 ALTER TABLE `recognition_statuses` 
- ADD INDEX `IX_status_alias` (`status_alias` ASC)
+ ADD UNIQUE INDEX `IX_status_alias` (`status_alias` ASC)
 ;
 
 ALTER TABLE `request_photos` 
@@ -277,19 +277,19 @@ ALTER TABLE `request_photos`
 ;
 
 ALTER TABLE `roles` 
- ADD INDEX `IX_role_alias` (`role_alias` ASC)
+ ADD UNIQUE INDEX `IX_role_alias` (`role_alias` ASC)
 ;
 
 ALTER TABLE `roles` 
- ADD INDEX `IX_role_id` (`role_id` ASC)
+ ADD UNIQUE INDEX `IX_role_id` (`role_id` ASC)
 ;
 
 ALTER TABLE `user_credentials` 
- ADD INDEX `IXFK_user_credentials_users` (`user_id` ASC)
+ ADD UNIQUE INDEX `IXFK_user_credentials_users` (`user_id` ASC)
 ;
 
 ALTER TABLE `user_credentials` 
- ADD INDEX `IX_user_mail` (`user_mail` ASC)
+ ADD UNIQUE INDEX `IX_user_mail` (`user_mail` ASC)
 ;
 
 DROP TRIGGER IF EXISTS `TRG_restrict_delete`
@@ -310,7 +310,7 @@ ALTER TABLE `users`
 ;
 
 ALTER TABLE `users` 
- ADD INDEX `IX_user_id` (`user_id` ASC)
+ ADD UNIQUE INDEX `IX_user_id` (`user_id` ASC)
 ;
 
 DROP FUNCTION IF EXISTS `get_admin_role_id`
