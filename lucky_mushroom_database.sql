@@ -98,7 +98,7 @@ CREATE TABLE `recognition_statuses`
 CREATE TABLE `request_photos`
 (
 	`photo_id` INT NOT NULL AUTO_INCREMENT,
-	`photo_filename` VARCHAR(128) NOT NULL,
+	`photo_filename` TEXT NOT NULL,
 	`request_id` INT NOT NULL,
 	CONSTRAINT `PK_request_photo` PRIMARY KEY (`photo_id` ASC)
 )
