@@ -181,7 +181,7 @@ ALTER TABLE `recognition_requests`
 ;
 
 ALTER TABLE `recognition_requests` 
- ADD UNIQUE INDEX `IX_request_datetime` (`request_datetime` ASC)
+ ADD INDEX `IX_request_datetime` (`request_datetime` ASC)
 ;
 
 DROP FUNCTION IF EXISTS `check_datetime`
@@ -428,3 +428,20 @@ ALTER TABLE `users`
 
 SET FOREIGN_KEY_CHECKS=1 
 ;
+
+INSERT INTO edible_statuses (edible_status_alias, edible_description) VALUES
+    ('edible', "Edible"),
+    ('partial-edible', "Partial edible"),
+    ('non-edible', "Non edible")
+;
+
+INSERT INTO recognition_statuses (status_alias, status_name) VALUES
+    ('recognized', "Recognized"),
+    ('not-recognized', "Not recognized")
+;
+
+INSERT INTO roles (role_alias, role_name) VALUES
+    ('user', "User"),
+    ('admin', "Administrator")
+;
+
