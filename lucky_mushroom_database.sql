@@ -38,6 +38,7 @@ DROP TABLE IF EXISTS `users` CASCADE
 CREATE TABLE `articles`
 (
 	`article_id` INT NOT NULL AUTO_INCREMENT,
+	`article_title` TEXT NOT NULL,
 	`article_text` TEXT NOT NULL,
 	CONSTRAINT `PK_articles` PRIMARY KEY (`article_id` ASC)
 )
