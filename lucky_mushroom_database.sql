@@ -185,47 +185,6 @@ ALTER TABLE `recognition_requests`
  ADD INDEX `IX_request_datetime` (`request_datetime` ASC)
 ;
 
-DROP FUNCTION IF EXISTS `check_datetime`
-;
-
-DROP TRIGGER IF EXISTS `TRG_check_insert_datetime`
-;
-
-DROP TRIGGER IF EXISTS `TRG_check_update_datetime`
-;
-
-DELIMITER //
-CREATE FUNCTION check_datetime(new_datetime DATETIME)
-	RETURNS BOOLEAN
-	NOT DETERMINISTIC
-	NO SQL
-BEGIN
-	RETURN new_datetime <= NOW();
-END;
-
-CREATE TRIGGER TRG_check_insert_datetime BEFORE INSERT ON recognition_requests
-FOR EACH ROW
-BEGIN
-	IF NOT check_datetime(NEW.request_datetime) THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Datetime is from future',
-			MYSQL_ERRNO = 1001;
-	END IF;
-END;
-
-CREATE TRIGGER TRG_check_update_datetime BEFORE UPDATE ON recognition_requests
-FOR EACH ROW
-BEGIN
-	IF NOT check_datetime(NEW.request_datetime) THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'New datetime is from future',
-			MYSQL_ERRNO = 1001;
-	END IF;
-END; 
-//
-DELIMITER ;
-;
-
 DROP TRIGGER IF EXISTS `TRG_check_insert_gps_tag`
 ;
 
