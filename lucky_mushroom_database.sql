@@ -397,7 +397,8 @@ INSERT INTO edible_statuses (edible_status_alias, edible_description) VALUES
 
 INSERT INTO recognition_statuses (status_alias, status_name) VALUES
     ('recognized', "Recognized"),
-    ('not-recognized', "Not recognized")
+    ('not-recognized', "Not recognized"),
+	('not-a-mushroom', "Not a mushroom")
 ;
 
 INSERT INTO roles (role_alias, role_name) VALUES
