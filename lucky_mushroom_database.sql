@@ -56,7 +56,7 @@ CREATE TABLE `articles_gps_tags`
 
 CREATE TABLE `edible_statuses`
 (
-    `edible_status_alias` ENUM('edible', 'partial-edible', 'non-edible') NOT NULL,
+    `edible_status_alias` ENUM('edible', 'partial-edible', 'non-edible', 'not-a-mushroom') NOT NULL,
     `edible_description` VARCHAR(16) NOT NULL,
     `edible_status_id` INT NOT NULL AUTO_INCREMENT,
     CONSTRAINT `PK_edible_statuses` PRIMARY KEY (`edible_status_id` ASC)
